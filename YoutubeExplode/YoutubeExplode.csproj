@@ -28,9 +28,14 @@
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.0.4" />
+    <PackageReference Include="JsonExtensions" Version="1.2.0" />
     <PackageReference Include="Lazy.Fody" Version="1.11.0" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
     <PackageReference Include="PolyShim" Version="1.7.0" PrivateAssets="all" />
+    <PackageReference Include="PowerKit" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>

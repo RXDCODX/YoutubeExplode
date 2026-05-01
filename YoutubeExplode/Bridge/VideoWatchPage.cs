@@ -24,13 +24,16 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             .QuerySelector("meta[itemprop=\"uploadDate\"]")
             ?.GetAttribute("content")
             ?.NullIfWhiteSpace()
-            ?.Pipe(s => DateTimeOffset.ParseOrNull(s, CultureInfo.InvariantCulture, DateTimeStyles.None))
+            ?.Pipe(s =>
+                DateTimeOffset.ParseOrNull(s, CultureInfo.InvariantCulture, DateTimeStyles.None)
             )
         ?? content
             .QuerySelector("meta[itemprop=\"datePublished\"]")
             ?.GetAttribute("content")
             ?.NullIfWhiteSpace()
-            ?.Pipe(s => DateTimeOffset.ParseOrNull(s, CultureInfo.InvariantCulture, DateTimeStyles.None));
+            ?.Pipe(s =>
+                DateTimeOffset.ParseOrNull(s, CultureInfo.InvariantCulture, DateTimeStyles.None)
+            );
 
     [Lazy]
     public long? LikeCount =>
