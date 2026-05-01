@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using YoutubeExplode.Converter.Utils.Extensions;
+using PowerKit.Extensions;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Converter;

@@ -4,11 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-#pragma warning disable CS0246
 using Lazy;
-#pragma warning restore CS0246
+using PowerKit.Extensions;
 using YoutubeExplode.Utils;
-using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
@@ -56,16 +54,7 @@ internal partial class DashManifest
             (long?)content.Attribute("contentLength")
             ?? Url?.Pipe(s => Regex.Match(s, @"[/\?]clen[/=](\d+)").Groups[1].Value)
                 .NullIfWhiteSpace()
-                ?.Pipe(s =>
-                    long.TryParse(
-                        s,
-                        NumberStyles.Integer,
-                        CultureInfo.InvariantCulture,
-                        out var result
-                    )
-                        ? result
-                        : (long?)null
-                );
+                ?.Pipe(s => long.ParseOrNull(s, CultureInfo.InvariantCulture));
 
         [Lazy]
         public long? Bitrate => (long?)content.Attribute("bandwidth");
@@ -98,6 +87,8 @@ internal partial class DashManifest
 
         [Lazy]
         public int? VideoHeight => (int?)content.Attribute("height");
+
+        public bool IsVideoUpscaled => false;
 
         [Lazy]
         public int? VideoFramerate => (int?)content.Attribute("frameRate");

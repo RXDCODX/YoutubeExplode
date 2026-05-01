@@ -7,12 +7,12 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using PowerKit.Extensions;
 using YoutubeExplode.Bridge;
 using YoutubeExplode.Bridge.Cipher;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
-using YoutubeExplode.Utils.Extensions;
 using YoutubeExplode.Videos.ClosedCaptions;
 
 namespace YoutubeExplode.Videos.Streams;
@@ -158,7 +158,8 @@ public class StreamClient(HttpClient http)
                         streamData.IsAudioLanguageDefault,
                         streamData.VideoCodec,
                         videoQuality,
-                        videoResolution
+                        videoResolution,
+                        streamData.IsVideoUpscaled
                     );
 
                     yield return streamInfo;
@@ -173,7 +174,8 @@ public class StreamClient(HttpClient http)
                         bitrate,
                         streamData.VideoCodec,
                         videoQuality,
-                        videoResolution
+                        videoResolution,
+                        streamData.IsVideoUpscaled
                     );
 
                     yield return streamInfo;

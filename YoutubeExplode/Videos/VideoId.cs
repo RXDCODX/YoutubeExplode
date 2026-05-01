@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace YoutubeExplode.Videos;
 
@@ -65,7 +65,7 @@ public partial struct VideoId
 
     /// <summary>
     /// Attempts to parse the specified string as a video ID or URL.
-    /// Returns null in case of failure.
+    /// Returns <see langword="null" /> in case of failure.
     /// </summary>
     public static VideoId? TryParse(string? videoIdOrUrl) =>
         TryNormalize(videoIdOrUrl)?.Pipe(id => new VideoId(id));

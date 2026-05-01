@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CliWrap;
 using CliWrap.Exceptions;
-using YoutubeExplode.Converter.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace YoutubeExplode.Converter;
 
@@ -135,11 +135,9 @@ internal partial class FFmpeg
                     + TimeSpan.FromSeconds(seconds);
 
                 progress.Report(
-                    Math.Clamp(
-                        processedDuration.TotalMilliseconds / totalDuration.Value.TotalMilliseconds,
-                        0,
-                        1
-                    )
+                    (
+                        processedDuration.TotalMilliseconds / totalDuration.Value.TotalMilliseconds
+                    ).Clamp(0, 1)
                 );
             }
         });

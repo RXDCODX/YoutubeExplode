@@ -3,11 +3,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using PowerKit;
 using Xunit;
 using Xunit.Abstractions;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Tests.TestData;
-using YoutubeExplode.Tests.Utils;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Tests;
@@ -110,6 +110,21 @@ public class StreamSpecs(ITestOutputHelper testOutput)
                 && t.AudioLanguage.Value.Name == "Portuguese (BR)"
                 && t.IsAudioLanguageDefault == false
             );
+    }
+
+    [Fact]
+    public async Task I_can_get_the_list_of_available_streams_of_a_video_with_upscaled_streams()
+    {
+        // Arrange
+        using var youtube = new YoutubeClient();
+
+        // Act
+        var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.WithUpscaledStreams);
+
+        // Assert
+        manifest.Streams.Should().NotBeEmpty();
+        manifest.GetVideoStreams().Should().Contain(s => s.IsVideoUpscaled);
+        manifest.GetVideoStreams().Should().Contain(s => !s.IsVideoUpscaled);
     }
 
     [Theory]

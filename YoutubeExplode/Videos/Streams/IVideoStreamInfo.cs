@@ -24,6 +24,11 @@ public interface IVideoStreamInfo : IStreamInfo
     /// Video resolution.
     /// </summary>
     Resolution VideoResolution { get; }
+
+    /// <summary>
+    /// Whether this stream was produced by YouTube's Super Resolution (AI upscaling) feature.
+    /// </summary>
+    bool IsVideoUpscaled { get; }
 }
 
 /// <summary>
@@ -33,7 +38,7 @@ public static class VideoStreamInfoExtensions
 {
     /// <summary>
     /// Gets the video stream with the highest video quality (including framerate).
-    /// Returns null if the sequence is empty.
+    /// Returns <see langword="null" /> if the sequence is empty.
     /// </summary>
     public static IVideoStreamInfo? TryGetWithHighestVideoQuality(
         this IEnumerable<IVideoStreamInfo> streamInfos

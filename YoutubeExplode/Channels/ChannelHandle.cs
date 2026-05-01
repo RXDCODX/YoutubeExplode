@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace YoutubeExplode.Channels;
 
@@ -51,7 +51,7 @@ public partial struct ChannelHandle
 
     /// <summary>
     /// Attempts to parse the specified string as a YouTube channel handle or custom URL.
-    /// Returns null in case of failure.
+    /// Returns <see langword="null" /> in case of failure.
     /// </summary>
     public static ChannelHandle? TryParse(string? channelHandleOrUrl) =>
         TryNormalize(channelHandleOrUrl)?.Pipe(handle => new ChannelHandle(handle));
