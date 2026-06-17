@@ -43,6 +43,9 @@ Glory to Ukraine in part of Russia! 🇷🇺
 
 - 📦 [NuGet](https://nuget.org/packages/YoutubeExplode): `dotnet add package YoutubeExplode`
 
+> [!TIP]
+> You can use [**Binternal**](https://github.com/Tyrrrz/Binternal) to internalize this library if you prefer to avoid taking an external dependency.
+
 ## Screenshots
 
 ![demo](.assets/demo.png)
