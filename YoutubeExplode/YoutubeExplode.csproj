@@ -33,13 +33,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Internalize="true" PrivateAssets="all" />
-    <PackageReference Include="Binternal" PrivateAssets="all" />
-    <PackageReference Include="CSharpier.MsBuild" PrivateAssets="all" />
-    <PackageReference Include="JsonExtensions" Internalize="true" PrivateAssets="all" />
-    <PackageReference Include="Lazy.Fody" PrivateAssets="all" />
-    <PackageReference Include="PolyShim" PrivateAssets="all" />
-    <PackageReference Include="PowerKit" PrivateAssets="all" />
+    <PackageReference Include="AngleSharp" />
+    <PackageReference Include="Binternal" />
+    <PackageReference Include="CSharpier.MsBuild" />
+    <PackageReference Include="JsonExtensions" />
+    <PackageReference Include="Lazy.Fody" />
+    <PackageReference Include="PolyShim" />
+    <PackageReference Include="PowerKit" />
   </ItemGroup>
 
   <ItemGroup>
