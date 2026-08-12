@@ -78,7 +78,7 @@
       <YoutubeExplodeLocalHead>@(YoutubeExplodeLocalHeadLine)</YoutubeExplodeLocalHead>
       <YoutubeExplodeUpstreamHeadRaw>@(YoutubeExplodeUpstreamHeadLine)</YoutubeExplodeUpstreamHeadRaw>
       <YoutubeExplodeUpstreamHead
-        Condition="'$(YoutubeExplodeUpstreamHeadRaw)' != '' and $([System.String]::Copy('$(YoutubeExplodeUpstreamHeadRaw)').Length) &gt;= 40"
+        Condition="'$(YoutubeExplodeUpstreamHeadRaw)' != ''"
         >$([System.String]::Copy('$(YoutubeExplodeUpstreamHeadRaw)').Substring(0, 40))</YoutubeExplodeUpstreamHead
       >
     </PropertyGroup>
@@ -97,13 +97,13 @@
     />
 
     <Warning
-      Text="Не удалось выполнить проверку merge-base для upstream $(YoutubeExplodeUpstreamUrl). Код: $(YoutubeExplodeAncestorExitCode)."
-      Condition="'$(YoutubeExplodeAncestorExitCode)' != '' and '$(YoutubeExplodeAncestorExitCode)' != '0' and '$(YoutubeExplodeAncestorExitCode)' != '1'"
+      Text="Не удалось выполнить проверку merge-base для upstream $(YoutubeExplodeUpstreamUrl). Код: $(YoutubeExplodeAncestorExitCode). Проверьте наличие git и доступ в сеть."
+      Condition="'$(YoutubeExplodeAncestorExitCode)' != '' and '$(YoutubeExplodeAncestorExitCode)' != '0' and '$(YoutubeExplodeAncestorExitCode)' != '1' and '$(YoutubeExplodeAncestorExitCode)' != '128'"
     />
 
     <Error
-      Text="Сборка остановлена: версия форка YoutubeExplode неактуальна. Коммит upstream $(YoutubeExplodeUpstreamHead) отсутствует в текущей ветке (локальный HEAD: $(YoutubeExplodeLocalHead)). Подтяните upstream и залейте изменения в ваш форк."
-      Condition="'$(YoutubeExplodeAncestorExitCode)' == '1'"
+      Text="Сборка остановлена: версия форка YoutubeExplode неактуальна. Текущая ветка (локальный HEAD: $(YoutubeExplodeLocalHead)) не содержит коммит upstream $(YoutubeExplodeUpstreamHead). Форк отстаёт от оригинального репозитория $(YoutubeExplodeUpstreamUrl). Подтяните upstream и залейте изменения в ваш форк."
+      Condition="'$(YoutubeExplodeAncestorExitCode)' == '1' or '$(YoutubeExplodeAncestorExitCode)' == '128'"
     />
   </Target>
 </Project>
