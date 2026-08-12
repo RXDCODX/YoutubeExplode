@@ -143,9 +143,8 @@ public class ClosedCaptionClient(HttpClient http)
         var track = await GetAsync(trackInfo, cancellationToken);
 
         var buffer = new StringBuilder();
-        for (var i = 0; i < track.Captions.Count; i++)
+        foreach (var (i, caption) in track.Captions.Index())
         {
-            var caption = track.Captions[i];
             cancellationToken.ThrowIfCancellationRequested();
 
             buffer

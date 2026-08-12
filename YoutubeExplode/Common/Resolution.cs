@@ -19,7 +19,7 @@ public readonly partial struct Resolution(int width, int height)
     public int Height { get; } = height;
 
     /// <summary>
-    /// Viewport area (i.e. width multiplied by height).
+    /// Viewport area (i.e., width multiplied by height).
     /// </summary>
     public int Area => Width * Height;
 
@@ -44,8 +44,6 @@ public partial struct Resolution : IEquatable<Resolution>
     /// </summary>
     public static bool operator ==(Resolution left, Resolution right) => left.Equals(right);
 
-    /// <summary>
-    /// Equality check.
-    /// </summary>
+    /// <inheritdoc cref="operator ==(Resolution, Resolution)" />
     public static bool operator !=(Resolution left, Resolution right) => !(left == right);
 }

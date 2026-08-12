@@ -71,7 +71,7 @@ public class SearchClient(HttpClient http)
                     videoData.ChannelId
                     ?? throw new YoutubeExplodeException("Failed to extract the video channel ID.");
 
-                // Some videos have invalid channel IDs (e.g. just "UC"). Such videos appear to generally
+                // Some videos have invalid channel IDs (e.g., just "UC"). Such videos appear to generally
                 // be unplayable anyway, so it's safe to skip them.
                 // https://github.com/Tyrrrz/YoutubeExplode/issues/944
                 var parsedVideoChannelId = ChannelId.TryParse(videoChannelId);
@@ -237,9 +237,7 @@ public class SearchClient(HttpClient http)
         } while (!string.IsNullOrWhiteSpace(continuationToken));
     }
 
-    /// <summary>
-    /// Enumerates batches of search results returned by the specified query.
-    /// </summary>
+    /// <inheritdoc cref="GetResultBatchesAsync(string, SearchFilter, CancellationToken)" />
     public IAsyncEnumerable<Batch<ISearchResult>> GetResultBatchesAsync(
         string searchQuery,
         CancellationToken cancellationToken = default
