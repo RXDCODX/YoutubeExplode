@@ -11,9 +11,10 @@ internal static class VideoIds
     public const string ContentCheckViolent = "rXMX4YJ7Lks";
     public const string ContentCheckSexual = "SkRSXFQerZs";
     public const string ContentCheckSuicide = "4QXCPuwBz2E";
+    public const string ForKids = "nQuzyJ-C1Fc";
     public const string RequiresPurchase = "p3dDcKOFXQg";
     public const string RequiresPurchaseDistributed = "qs3NZHVM_Ik";
-    public const string LiveStream = "jfKfPfyJRdk";
+    public const string LiveStream = "4xDzrJKXOOY";
     public const string LiveStreamRecording = "rsAAeyAr-9Y";
     public const string WithBrokenTitle = "4ZJWv6t-PfY";
     public const string WithHighQualityStreams = "V5Fsj_sCKdg";
@@ -22,5 +23,5 @@ internal static class VideoIds
     public const string WithClosedCaptions = "YltHGKX80Y8";
     public const string WithBrokenClosedCaptions = "1VKIIw05JnE";
     public const string WithMultipleAudioLanguages = "ngqcjXfggHQ";
-    public const string WithUpscaledStreams = "IFACrIx5SZ0";
+    public const string WithUpscaledStreams = "0N1_0SUGlDQ";
 }

@@ -138,6 +138,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [InlineData(VideoIds.LiveStreamRecording)]
     [InlineData(VideoIds.WithOmnidirectionalStreams)]
     [InlineData(VideoIds.WithHighDynamicRangeStreams)]
+    [InlineData(VideoIds.ForKids)]
     public async Task I_can_get_the_list_of_available_streams_of_any_playable_video(string videoId)
     {
         // Arrange
@@ -233,6 +234,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [InlineData(VideoIds.ContentCheckSuicide)]
     [InlineData(VideoIds.LiveStreamRecording)]
     [InlineData(VideoIds.WithOmnidirectionalStreams)]
+    [InlineData(VideoIds.ForKids)]
     public async Task I_can_download_a_specific_stream_of_a_video(string videoId)
     {
         // Arrange
