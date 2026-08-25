@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -85,72 +86,18 @@ internal class VideoController(HttpClient http)
         }
     }
 
-    public async ValueTask<PlayerResponse> GetPlayerResponseAsync(
-        VideoId videoId,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var visitorData = await ResolveVisitorDataAsync(cancellationToken);
-
-        // YouTube now requires Proof of Origin (PO) tokens for most Innertube clients
-        // (WEB, iOS, ANDROID, ANDROID_VR, etc.), causing stream downloads to fail with
-        // 403 Forbidden or LOGIN_REQUIRED bot-check errors.
-        // VISIONOS currently returns progressive streams without PO tokens or deciphering,
-        // matching yt-dlp's default JS-less client.
-        var visionResponse = await GetPlayerResponseForVisionOsAsync(
-            videoId,
-            visitorData,
-            cancellationToken
-        );
-        if (visionResponse.IsPlayable)
-            return visionResponse;
-
-        // "Made for kids" videos are not available on VISIONOS (or ANDROID_VR).
-        // ANDROID still returns a muxed itag-18 stream without deciphering.
-        var androidResponse = await GetPlayerResponseForAndroidAsync(
-            videoId,
-            visitorData,
-            cancellationToken
-        );
-        if (androidResponse.IsPlayable)
-            return androidResponse;
-
-        if (!visionResponse.IsAvailable && !androidResponse.IsAvailable)
-            throw new VideoUnavailableException($"Video '{videoId}' is not available.");
-
-        return visionResponse.IsAvailable ? visionResponse : androidResponse;
-    }
-
-    public async ValueTask<PlayerResponse> GetPlayerResponseAsync(
-        VideoId videoId,
-        string? signatureTimestamp,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var visitorData = await ResolveVisitorDataAsync(cancellationToken);
-
-        // The only client that can handle age-restricted videos without authentication is the
-        // TVHTML5_SIMPLY_EMBEDDED_PLAYER client.
-        // This client does require signature deciphering, so we only use it as a fallback.
-        var playerResponse = await GetPlayerResponseForTvAsync(
-            videoId,
-            visitorData,
-            signatureTimestamp,
-            cancellationToken
-        );
-
-        if (!playerResponse.IsAvailable)
-            throw new VideoUnavailableException($"Video '{videoId}' is not available.");
-
-        return playerResponse;
-    }
-
-    private ValueTask<PlayerResponse> GetPlayerResponseForVisionOsAsync(
+    private async ValueTask<PlayerResponse> GetPlayerResponseForVisionOsAsync(
         VideoId videoId,
         string visitorData,
         CancellationToken cancellationToken = default
-    ) =>
-        SendPlayerRequestAsync(
+    )
+    {
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "https://www.youtube.com/youtubei/v1/player"
+        );
+
+        request.Content = new StringContent(
             // lang=json
             $$"""
             {
@@ -172,17 +119,42 @@ internal class VideoController(HttpClient http)
                 }
               }
             }
-            """,
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 15_7_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15",
-            cancellationToken
+            """
         );
 
-    private ValueTask<PlayerResponse> GetPlayerResponseForAndroidAsync(
+        request.Headers.Add(
+            "User-Agent",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 15_7_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15"
+        );
+
+        using var response = await Http.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        var playerResponse = PlayerResponse.Parse(
+            await response.Content.ReadAsStringAsync(cancellationToken)
+        );
+
+        if (!playerResponse.IsAvailable)
+            throw new VideoUnavailableException($"Video '{videoId}' is not available.");
+
+        if (!playerResponse.IsPlayable)
+            throw new VideoUnplayableException($"Video '{videoId}' is unplayable.");
+
+        return playerResponse;
+    }
+
+    private async ValueTask<PlayerResponse> GetPlayerResponseForAndroidAsync(
         VideoId videoId,
         string visitorData,
         CancellationToken cancellationToken = default
-    ) =>
-        SendPlayerRequestAsync(
+    )
+    {
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "https://www.youtube.com/youtubei/v1/player"
+        );
+
+        request.Content = new StringContent(
             // lang=json
             $$"""
             {
@@ -203,49 +175,33 @@ internal class VideoController(HttpClient http)
                 }
               }
             }
-            """,
-            "com.google.android.youtube/21.26.364 (Linux; U; Android 11) gzip",
-            cancellationToken
+            """
+        );
+        request.Headers.Add(
+            "User-Agent",
+            "com.google.android.youtube/21.26.364 (Linux; U; Android 11) gzip"
         );
 
-    private ValueTask<PlayerResponse> GetPlayerResponseForTvAsync(
+        using var response = await Http.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        var playerResponse = PlayerResponse.Parse(
+            await response.Content.ReadAsStringAsync(cancellationToken)
+        );
+
+        if (!playerResponse.IsAvailable)
+            throw new VideoUnavailableException($"Video '{videoId}' is not available.");
+
+        if (!playerResponse.IsPlayable)
+            throw new VideoUnplayableException($"Video '{videoId}' is unplayable.");
+
+        return playerResponse;
+    }
+
+    private async ValueTask<PlayerResponse> GetPlayerResponseForTvAsync(
         VideoId videoId,
         string visitorData,
         string? signatureTimestamp,
-        CancellationToken cancellationToken = default
-    ) =>
-        SendPlayerRequestAsync(
-            // lang=json
-            $$"""
-            {
-              "videoId": {{Json.Encode(videoId)}},
-              "context": {
-                "client": {
-                  "clientName": "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
-                  "clientVersion": "2.0",
-                  "visitorData": {{Json.Encode(visitorData)}},
-                  "hl": "en",
-                  "gl": "US",
-                  "utcOffsetMinutes": 0
-                },
-                "thirdParty": {
-                  "embedUrl": "https://www.youtube.com"
-                }
-              },
-              "playbackContext": {
-                "contentPlaybackContext": {
-                  "signatureTimestamp": {{Json.Encode(signatureTimestamp)}}
-                }
-              }
-            }
-            """,
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
-            cancellationToken
-        );
-
-    private async ValueTask<PlayerResponse> SendPlayerRequestAsync(
-        string content,
-        string userAgent,
         CancellationToken cancellationToken = default
     )
     {
@@ -254,11 +210,87 @@ internal class VideoController(HttpClient http)
             "https://www.youtube.com/youtubei/v1/player"
         );
 
-        request.Content = new StringContent(content);
-        request.Headers.Add("User-Agent", userAgent);
+        request.Content = new StringContent(
+            // lang=json
+            $$"""
+            {
+                "videoId": {{Json.Encode(videoId)}},
+                "context": {
+                    "client": {
+                        "clientName": "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
+                        "clientVersion": "2.0",
+                        "visitorData": {{Json.Encode(visitorData)}},
+                        "hl": "en",
+                        "gl": "US",
+                        "utcOffsetMinutes": 0
+                    },
+                    "thirdParty": {
+                        "embedUrl": "https://www.youtube.com"
+                    }
+                },
+                "playbackContext": {
+                    "contentPlaybackContext": {
+                        "signatureTimestamp": {{Json.Encode(signatureTimestamp)}}
+                    }
+                }
+            }
+            """
+        );
+        request.Headers.Add(
+            "User-Agent",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36"
+        );
 
         using var response = await Http.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
-        return PlayerResponse.Parse(await response.Content.ReadAsStringAsync(cancellationToken));
+
+        var playerResponse = PlayerResponse.Parse(
+            await response.Content.ReadAsStringAsync(cancellationToken)
+        );
+
+        if (!playerResponse.IsAvailable)
+            throw new VideoUnavailableException($"Video '{videoId}' is not available.");
+
+        if (!playerResponse.IsPlayable)
+            throw new VideoUnplayableException($"Video '{videoId}' is unplayable.");
+
+        return playerResponse;
     }
+
+    public async ValueTask<PlayerResponse> GetPlayerResponseAsync(
+        VideoId videoId,
+        string? signatureTimestamp = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var visitorData = await ResolveVisitorDataAsync(cancellationToken);
+
+        // We use the TV client for age-restricted videos as it circumvents the age gate, but it
+        // imposes signature ciphering, so we only use this client if we have a signature timestamp.
+        if (!string.IsNullOrWhiteSpace(signatureTimestamp))
+        {
+            return await GetPlayerResponseForTvAsync(
+                videoId,
+                visitorData,
+                signatureTimestamp,
+                cancellationToken
+            );
+        }
+
+        try
+        {
+            // VisionOS is the primary client, as it works for most videos
+            return await GetPlayerResponseForVisionOsAsync(videoId, visitorData, cancellationToken);
+        }
+        catch (Exception ex) when (ex is VideoUnplayableException or VideoUnavailableException)
+        {
+            // Android is used as a fallback as it works for certain other videos, such as videos intended for kids
+            return await GetPlayerResponseForAndroidAsync(videoId, visitorData, cancellationToken);
+        }
+    }
+
+    public async ValueTask<PlayerResponse> GetPlayerResponseAsync(
+        VideoId videoId,
+        CancellationToken cancellationToken = default
+    ) => await GetPlayerResponseAsync(videoId, null, cancellationToken);
 }
