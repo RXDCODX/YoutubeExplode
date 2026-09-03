@@ -423,3 +423,7 @@ using var youtube = new YoutubeClient(cookies);
 ```
 
 In order to actually perform the authentication, you can use an embedded browser such as [WebView](https://nuget.org/packages/Microsoft.Web.WebView2) to navigate the user to the [YouTube login page](https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fwww.youtube.com), let them log in, and then extract the cookies from the browser.
+
+## Etymology
+
+The "Explode" in **YoutubeExplode** comes from the name of a PHP function that splits up strings, [`explode(...)`](https://php.net/manual/en/function.explode.php). When I was starting the development of this library, most of the reference source code I read was written in PHP, hence the inspiration for the name.
