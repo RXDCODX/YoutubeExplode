@@ -1,5 +1,5 @@
 using System.Text.Json;
-using JsonExtensions.Reading;
+using JsonExtensions;
 using Lazy;
 
 namespace YoutubeExplode.Bridge;

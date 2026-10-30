@@ -24,14 +24,20 @@
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" />
-    <PackageReference Include="Binternal" />
+    <PackageReference Include="Binternal">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="CSharpier.MsBuild">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="JsonExtensions" />
     <PackageReference Include="Lazy.Fody" />
-    <PackageReference Include="PolyShim" />
+    <PackageReference Include="PolyShim">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="PowerKit" />
   </ItemGroup>
 

@@ -5,7 +5,8 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
-using JsonExtensions.Reading;
+using JsonExtensions;
+
 using Lazy;
 using PowerKit.Extensions;
 using YoutubeExplode.Utils;
