@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using JsonExtensions;
-
+using PowerKit.Json.Extensions;
 
 namespace YoutubeExplode.Utils.Extensions;
 
-internal static class JsonExtensions
+internal static class JsonElementExtensions
 {
     extension(JsonElement element)
     {

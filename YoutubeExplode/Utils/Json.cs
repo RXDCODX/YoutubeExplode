@@ -1,7 +1,9 @@
-using System.Globalization;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using PowerKit.Json.Extensions;
 
 namespace YoutubeExplode.Utils;
 
@@ -40,50 +42,14 @@ internal static class Json
         return buffer.ToString();
     }
 
-    public static JsonElement Parse(string source)
+    public static string Encode(IReadOnlyDictionary<string, object?> obj)
     {
-        using var document = JsonDocument.Parse(source);
-        return document.RootElement.Clone();
+        using var buffer = new MemoryStream();
+        using var writer = new Utf8JsonWriter(buffer);
+
+        writer.WriteValue(obj);
+        writer.Flush();
+
+        return Encoding.UTF8.GetString(buffer.ToArray());
     }
-
-    public static JsonElement? TryParse(string source)
-    {
-        try
-        {
-            return Parse(source);
-        }
-        catch (JsonException)
-        {
-            return null;
-        }
-    }
-
-    public static string Escape(string value)
-    {
-        var buffer = new StringBuilder(value.Length);
-
-        foreach (var ch in value)
-        {
-            if (ch == '\n')
-                buffer.Append("\\n");
-            else if (ch == '\r')
-                buffer.Append("\\r");
-            else if (ch == '\t')
-                buffer.Append("\\t");
-            else if (ch == '\\')
-                buffer.Append("\\\\");
-            else if (ch == '"')
-                buffer.Append("\\\"");
-            else
-                buffer.Append(ch);
-        }
-
-        return buffer.ToString();
-    }
-
-    public static string Encode(string? value) =>
-        value is not null ? '"' + Escape(value) + '"' : "null";
-
-    public static string Encode(int? value) =>
-        value is not null ? value.Value.ToString(CultureInfo.InvariantCulture) : "null";
 }

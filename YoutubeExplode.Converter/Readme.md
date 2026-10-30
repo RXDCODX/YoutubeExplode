@@ -3,14 +3,14 @@
 [![Version](https://img.shields.io/nuget/v/YoutubeExplode.Converter.svg)](https://nuget.org/packages/YoutubeExplode.Converter)
 [![Downloads](https://img.shields.io/nuget/dt/YoutubeExplode.Converter.svg)](https://nuget.org/packages/YoutubeExplode.Converter)
 
-**YoutubeExplode.Converter** is an extension package for **YoutubeExplode** that provides the capability to download YouTube videos into a single file by fetching individual streams and muxing them.
+**YoutubeExplode.Converter** is an extension package for **YoutubeExplode** that provides the capability to download YouTube videos by muxing their dedicated audio and video streams together.
 This package relies on [FFmpeg](https://ffmpeg.org) under the hood.
 
 ## Install
 
 - 📦 [NuGet](https://nuget.org/packages/YoutubeExplode.Converter): `dotnet add package YoutubeExplode.Converter`
 
-> **Important**:
+> [!IMPORTANT]
 > This package requires the [FFmpeg CLI](https://ffmpeg.org) to work, which can be downloaded [here](https://github.com/Tyrrrz/FFmpegBin/releases).
 > Ensure that it's located in your application's probe directory or on the system's `PATH`, or provide a custom location yourself using one of the available method overloads.
 
@@ -67,7 +67,7 @@ await youtube.Videos.DownloadAsync(videoUrl, "video.mp4", o => o
 
 ### Manually selecting streams
 
-If you need precise control over which streams are used for the muxing process, you can also provide them yourself instead of relying on the automatic resolution:
+If you need precise control over which streams are used for the muxing process, you can also provide them yourself instead of relying on the automatic resolution logic:
 
 ```csharp
 using YoutubeExplode;

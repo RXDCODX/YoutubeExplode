@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using JsonExtensions;
+using PowerKit.Json.Extensions;
 using YoutubeExplode.Bridge;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
@@ -43,9 +45,9 @@ internal class VideoController(HttpClient http)
         if (jsonString.StartsWith(")]}'"))
             jsonString = jsonString[4..];
 
-        var json = Json.Parse(jsonString);
+        var json = JsonElement.Parse(jsonString);
 
-        // This is just an ordered (but unstructured) blob of data
+        // This is just an unstructured (but ordered) blob of data
         var value = json[0][2][0][0][13].GetStringOrNull();
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -98,28 +100,30 @@ internal class VideoController(HttpClient http)
         );
 
         request.Content = new StringContent(
-            // lang=json
-            $$"""
-            {
-              "videoId": {{Json.Encode(videoId)}},
-              "contentCheckOk": true,
-              "racyCheckOk": true,
-              "context": {
-                "client": {
-                  "clientName": "VISIONOS",
-                  "clientVersion": "1.02",
-                  "deviceMake": "Apple",
-                  "deviceModel": "RealityDevice17,1",
-                  "osName": "visionOS",
-                  "osVersion": "26.5.23O471",
-                  "visitorData": {{Json.Encode(visitorData)}},
-                  "hl": "en",
-                  "gl": "US",
-                  "utcOffsetMinutes": 0
+            Json.Encode(
+                new Dictionary<string, object?>
+                {
+                    ["videoId"] = videoId.ToString(),
+                    ["contentCheckOk"] = true,
+                    ["racyCheckOk"] = true,
+                    ["context"] = new Dictionary<string, object?>
+                    {
+                        ["client"] = new Dictionary<string, object?>
+                        {
+                            ["clientName"] = "VISIONOS",
+                            ["clientVersion"] = "1.02",
+                            ["deviceMake"] = "Apple",
+                            ["deviceModel"] = "RealityDevice17,1",
+                            ["osName"] = "visionOS",
+                            ["osVersion"] = "26.5.23O471",
+                            ["visitorData"] = visitorData,
+                            ["hl"] = "en",
+                            ["gl"] = "US",
+                            ["utcOffsetMinutes"] = 0,
+                        },
+                    },
                 }
-              }
-            }
-            """
+            )
         );
 
         request.Headers.Add(
@@ -155,28 +159,31 @@ internal class VideoController(HttpClient http)
         );
 
         request.Content = new StringContent(
-            // lang=json
-            $$"""
-            {
-              "videoId": {{Json.Encode(videoId)}},
-              "contentCheckOk": true,
-              "racyCheckOk": true,
-              "context": {
-                "client": {
-                  "clientName": "ANDROID",
-                  "clientVersion": "21.26.364",
-                  "androidSdkVersion": 30,
-                  "osName": "Android",
-                  "osVersion": "11",
-                  "visitorData": {{Json.Encode(visitorData)}},
-                  "hl": "en",
-                  "gl": "US",
-                  "utcOffsetMinutes": 0
+            Json.Encode(
+                new Dictionary<string, object?>
+                {
+                    ["videoId"] = videoId.ToString(),
+                    ["contentCheckOk"] = true,
+                    ["racyCheckOk"] = true,
+                    ["context"] = new Dictionary<string, object?>
+                    {
+                        ["client"] = new Dictionary<string, object?>
+                        {
+                            ["clientName"] = "ANDROID",
+                            ["clientVersion"] = "21.26.364",
+                            ["androidSdkVersion"] = 30,
+                            ["osName"] = "Android",
+                            ["osVersion"] = "11",
+                            ["visitorData"] = visitorData,
+                            ["hl"] = "en",
+                            ["gl"] = "US",
+                            ["utcOffsetMinutes"] = 0,
+                        },
+                    },
                 }
-              }
-            }
-            """
+            )
         );
+
         request.Headers.Add(
             "User-Agent",
             "com.google.android.youtube/21.26.364 (Linux; U; Android 11) gzip"
@@ -211,31 +218,37 @@ internal class VideoController(HttpClient http)
         );
 
         request.Content = new StringContent(
-            // lang=json
-            $$"""
-            {
-                "videoId": {{Json.Encode(videoId)}},
-                "context": {
-                    "client": {
-                        "clientName": "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
-                        "clientVersion": "2.0",
-                        "visitorData": {{Json.Encode(visitorData)}},
-                        "hl": "en",
-                        "gl": "US",
-                        "utcOffsetMinutes": 0
+            Json.Encode(
+                new Dictionary<string, object?>
+                {
+                    ["videoId"] = videoId.ToString(),
+                    ["context"] = new Dictionary<string, object?>
+                    {
+                        ["client"] = new Dictionary<string, object?>
+                        {
+                            ["clientName"] = "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
+                            ["clientVersion"] = "2.0",
+                            ["visitorData"] = visitorData,
+                            ["hl"] = "en",
+                            ["gl"] = "US",
+                            ["utcOffsetMinutes"] = 0,
+                        },
+                        ["thirdParty"] = new Dictionary<string, object?>
+                        {
+                            ["embedUrl"] = "https://www.youtube.com",
+                        },
                     },
-                    "thirdParty": {
-                        "embedUrl": "https://www.youtube.com"
-                    }
-                },
-                "playbackContext": {
-                    "contentPlaybackContext": {
-                        "signatureTimestamp": {{Json.Encode(signatureTimestamp)}}
-                    }
+                    ["playbackContext"] = new Dictionary<string, object?>
+                    {
+                        ["contentPlaybackContext"] = new Dictionary<string, object?>
+                        {
+                            ["signatureTimestamp"] = signatureTimestamp,
+                        },
+                    },
                 }
-            }
-            """
+            )
         );
+
         request.Headers.Add(
             "User-Agent",
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36"

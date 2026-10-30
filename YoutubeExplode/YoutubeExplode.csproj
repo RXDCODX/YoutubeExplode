@@ -39,6 +39,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="PowerKit" />
+    <PackageReference Include="PowerKit.Json" />
+    <PackageReference Include="Snek" />
   </ItemGroup>
 
   <ItemGroup>
